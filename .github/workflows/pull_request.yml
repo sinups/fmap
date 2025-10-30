@@ -23,7 +23,9 @@ jobs:
         run: yarn
       - name: Build package
         run: npm run build
-      - name: Build docs
-        run: npm run docs:build
+      - name: Generate docgen
+        run: npm run docgen
       - name: Run tests
         run: npm test
+      - name: Build docs
+        run: npm run docs:build

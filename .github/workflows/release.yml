@@ -36,6 +36,12 @@ jobs:
       - name: Install dependencies
         run: yarn
 
+      - name: Build package
+        run: npm run build
+
+      - name: Generate docgen
+        run: npm run docgen
+
       - name: Run tests
         run: npm test
 
@@ -53,10 +59,6 @@ jobs:
             echo "bump=none" >> $GITHUB_OUTPUT
           fi
 
-      - name: Build package
-        if: steps.version.outputs.bump != 'none'
-        run: npm run build
-
       - name: Bump version
         if: steps.version.outputs.bump != 'none'
         id: new_version
@@ -66,6 +68,10 @@ jobs:
           NEW_VERSION=$(node -p "require('./package.json').version")
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
           cd ..
+
+      - name: Rebuild package with new version
+        if: steps.version.outputs.bump != 'none'
+        run: npm run build
 
       - name: Copy files to package
         if: steps.version.outputs.bump != 'none'
