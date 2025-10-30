@@ -1,11 +1,11 @@
 {
   "name": "@sinups/fmap",
   "version": "0.0.1",
-  "description": "A template for Mantine extensions",
+  "description": "fmap is a lightweight tool that visualizes your file and folder structure in a clean, readable tree view — perfect for documentation, READMEs, and project overviews.",
   "homepage": "https://github.com/sinups/fmap#readme",
   "packageManager": "yarn@4.0.1",
   "license": "MIT",
-  "author": "Cojocari Andrei <webtheory.service@gmail.com>",
+  "author": "Cojocari Andrei <webtheory.service@gmail.com",
   "keywords": [
     "mantine",
     "tree",
