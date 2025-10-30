@@ -1,5 +1,5 @@
-import { TestComponentStylesApi } from './TestComponent.styles-api';
+import { TreeStylesApi } from './Tree.styles-api';
 
 export const STYLES_API_DATA = {
-  TestComponent: TestComponentStylesApi,
+  Tree: TreeStylesApi,
 };
