@@ -1,6 +1,6 @@
+import React from 'react';
 import { IconChevronDown } from '@tabler/icons-react';
-import { Button } from '../Button';
-import { Group } from '../Group';
+import { Button, Group } from '@mantine/core';
 import { Tree, TreeNodeData } from './Tree';
 import { useTree } from './use-tree';
 
@@ -59,7 +59,9 @@ export function Usage() {
 
 export function Controller() {
   const tree = useTree({
+    // eslint-disable-next-line no-console
     onNodeCollapse: (value) => console.log('Node collapsed:', value),
+    // eslint-disable-next-line no-console
     onNodeExpand: (value) => console.log('Node expanded:', value),
   });
   return (
