@@ -83,9 +83,10 @@ jobs:
         if: steps.version.outputs.bump != 'none'
         run: |
           cd package
-          npm publish --access public
+          npm publish --access public --ignore-scripts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_WORKSPACES: false
 
       - name: Commit version bump
         if: steps.version.outputs.bump != 'none'
@@ -104,7 +105,6 @@ jobs:
           release_name: ${{ steps.new_version.outputs.version }}
           body: |
             Release ${{ steps.new_version.outputs.version }}
-            
             **Changes:** ${{ github.event.head_commit.message }}
           draft: false
           prerelease: false
