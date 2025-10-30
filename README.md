@@ -51,17 +51,82 @@ To develop your extension locally, run the following commands:
 - Run `npm run dev` to start the documentation
 - To regenerate props documentation, run `npm run docgen`
 
-## Publishing package
+## Releases
 
-1. Login with your npm account by running `npm login`, if you have 2FA enabled, [generate automation token](https://docs.npmjs.com/creating-and-viewing-access-tokens) and add it to your `~/.npmrc` file
-2. Make sure that your package name is unique and does not exist on npm yet
-3. Run `npm run release:patch`, `npm run release:minor` or `npm run release:major` to publish new version of your package
+<details>
+<summary><b>Automated Release Process</b></summary>
 
-## Publish documentation
+### How it works
 
-By default, the documentation is deployed to GitHub Pages. The script to deploy documentation runs automatically when the package is published.
+Releases are automated using **Conventional Commits**. When you merge to `main` with a properly formatted commit message, GitHub Actions will automatically:
 
-To publish documentation manually, run `npm run docs:deploy`.
+- 🧪 Run tests
+- 📦 Build and publish to npm
+- 🏷️ Create GitHub Release
+- 📚 Deploy documentation to GitHub Pages
+
+### Commit Format
+
+The version bump is determined by your commit message:
+
+- `feat: new feature` → **minor** version (0.1.0 → 0.2.0)
+- `fix: bug fix` → **patch** version (0.1.0 → 0.1.1)
+- `feat!: breaking change` → **major** version (0.1.0 → 1.0.0)
+
+### Examples
+
+```bash
+# New feature (minor release)
+git commit -m "feat: add drag and drop support"
+
+# Bug fix (patch release)
+git commit -m "fix: resolve tree rendering issue"
+
+# Breaking change (major release)
+git commit -m "feat!: redesign component API"
+
+# With scope
+git commit -m "fix(tree): correct node selection"
+
+# No release (docs, chore, style, test, refactor)
+git commit -m "docs: update README"
+```
+
+### Workflow
+
+1. Create a feature branch:
+   ```bash
+   git checkout -b feat/my-feature
+   ```
+
+2. Make your changes and commit with proper format:
+   ```bash
+   git add .
+   git commit -m "feat: add awesome new feature"
+   ```
+
+3. Push and create a Pull Request:
+   ```bash
+   git push origin feat/my-feature
+   ```
+
+4. After review and merge to `main`, the release happens automatically! 🚀
+
+### Manual Release
+
+If needed, you can still release manually:
+
+```bash
+npm run release:patch  # 0.1.0 → 0.1.1
+npm run release:minor  # 0.1.0 → 0.2.0
+npm run release:major  # 0.1.0 → 1.0.0
+```
+
+### Documentation
+
+For detailed information, see [RELEASE_AUTOMATION.md](./RELEASE_AUTOMATION.md)
+
+</details>
 
 ## Links
 
