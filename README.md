@@ -1,5 +1,9 @@
 # fmap - File Map Component
 
+[![npm version](https://badge.fury.io/js/@sinups%2Ffmap.svg)](https://www.npmjs.com/package/@sinups/fmap)
+[![npm downloads](https://img.shields.io/npm/dm/@sinups/fmap.svg)](https://www.npmjs.com/package/@sinups/fmap)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Interactive tree component for visualizing file structures in Mantine applications.
 
 **fmap** stands for "file map" — a component for displaying hierarchical file and folder structures.

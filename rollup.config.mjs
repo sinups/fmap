@@ -1,11 +1,11 @@
 import path from 'node:path';
-import nodeExternals from 'rollup-plugin-node-externals';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
-import esbuild from 'rollup-plugin-esbuild';
-import postcss from 'rollup-plugin-postcss';
-import banner from 'rollup-plugin-banner2';
 import { createGenerateScopedName } from 'hash-css-selector';
+import banner from 'rollup-plugin-banner2';
+import esbuild from 'rollup-plugin-esbuild';
+import nodeExternals from 'rollup-plugin-node-externals';
+import postcss from 'rollup-plugin-postcss';
 
 const outputDir = path.join(process.cwd(), './package/dist');
 
@@ -17,6 +17,7 @@ export default {
       entryFileNames: '[name].mjs',
       dir: path.join(outputDir, 'esm'),
       preserveModules: true,
+      preserveModulesRoot: path.join(process.cwd(), './package/src'),
       sourcemap: true,
     },
     {
@@ -24,6 +25,7 @@ export default {
       entryFileNames: '[name].cjs',
       dir: path.join(outputDir, 'cjs'),
       preserveModules: true,
+      preserveModulesRoot: path.join(process.cwd(), './package/src'),
       sourcemap: true,
     },
   ],

@@ -1,4 +1,5 @@
-import { Button, Group, Tree, useTree } from '@mantine/core';
+import { Tree, useTree } from '@sinups/fmap';
+import { Button, Group } from '@mantine/core';
 import { MantineDemo } from '@mantinex/demo';
 import { data, dataCode } from './data';
 

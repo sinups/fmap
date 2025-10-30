@@ -1,4 +1,4 @@
-import { Tree } from '@mantine/core';
+import { Tree } from '@sinups/fmap';
 import { MantineDemo } from '@mantinex/demo';
 import { data, dataCode } from './data';
 

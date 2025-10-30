@@ -1,11 +1,13 @@
+import { Tree } from '@sinups/fmap';
 import { IconChevronDown } from '@tabler/icons-react';
-import { Group, Tree } from '@mantine/core';
+import { Group } from '@mantine/core';
 import { MantineDemo } from '@mantinex/demo';
 import { data, dataCode } from './data';
 
 const code = `
 import { IconChevronDown } from '@tabler/icons-react';
-import { Group, Tree } from '@mantine/core';
+import { Group } from '@mantine/core';
+import { Tree } from '@sinups/fmap';
 import { data } from './data';
 
 function Demo() {

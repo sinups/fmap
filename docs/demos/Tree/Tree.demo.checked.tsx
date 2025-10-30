@@ -1,5 +1,6 @@
+import { RenderTreeNodePayload, Tree } from '@sinups/fmap';
 import { IconChevronDown } from '@tabler/icons-react';
-import { Checkbox, Group, RenderTreeNodePayload, Tree } from '@mantine/core';
+import { Checkbox, Group } from '@mantine/core';
 import { MantineDemo } from '@mantinex/demo';
 import { data, dataCode } from './data';
 
