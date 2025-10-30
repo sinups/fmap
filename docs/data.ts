@@ -27,7 +27,7 @@ export interface PackageData {
 export const PACKAGE_DATA: PackageData = {
   packageName: '@sinups/fmap',
   packageDescription:
-    'A template for mantine extensions, includes full setup for package development and documentation',
+    'fmap is a lightweight tool that visualizes your file and folder structure in a clean, readable tree view — perfect for documentation',
   mdxFileUrl: 'https://github.com/sinups/fmap/blob/master/docs/pages/index.mdx',
   repositoryUrl: 'https://github.com/sinups/fmap',
   licenseUrl: 'https://github.com/sinups/fmap/blob/master/LICENSE',
