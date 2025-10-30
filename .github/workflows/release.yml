@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -106,8 +110,9 @@ jobs:
         if: steps.version.outputs.bump != 'none'
         run: |
           git add package/package.json
-          git commit -m "Release ${{ steps.new_version.outputs.version }}"
-          git push
+          git commit -m "v${{ steps.new_version.outputs.version }}"
+          git tag "v${{ steps.new_version.outputs.version }}"
+          git push origin main --tags
 
       - name: Create GitHub Release
         if: steps.version.outputs.bump != 'none'

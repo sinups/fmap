@@ -98,32 +98,54 @@ git commit -m "docs: update README"
 
 ### Workflow
 
-1. Create a feature branch:
+1. **Create a feature branch:**
    ```bash
    git checkout -b feat/my-feature
    ```
 
-2. Make your changes and commit with proper format:
+2. **Make your changes and commit:**
    ```bash
    git add .
-   git commit -m "feat: add awesome new feature"
+   git commit -m "Add awesome new feature"
    ```
 
-3. Push and create a Pull Request with a conventional commit title:
+3. **Push and create a Pull Request with a conventional commit title:**
    ```bash
    git push origin feat/my-feature
    ```
    
    **PR Title Format:** `type: description`
-   - ✅ `feat: add new feature`
-   - ✅ `fix: resolve bug`
-   - ✅ `docs: update documentation`
-   - ✅ `chore: update dependencies`
+   - ✅ `feat: add new feature` → minor bump (0.1.0 → 0.2.0)
+   - ✅ `fix: resolve bug` → patch bump (0.1.0 → 0.1.1)
+   - ✅ `feat!: breaking change` → major bump (0.1.0 → 1.0.0)
+   - ✅ `docs: update documentation` → no release
+   - ✅ `chore: update dependencies` → no release
    - ❌ `Add new feature` (missing type)
    
-   *Note: PR titles are validated automatically. Valid types: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `ci`*
+   *Valid types: `feat`, `fix`, `feat!`, `fix!`, `docs`, `chore`, `refactor`, `test`, `ci`*
 
-4. After review and merge to `main`, the release happens automatically! 🚀
+4. **Merge using "Squash and merge"** - This creates one commit with your PR title
+
+5. **Automatic release happens:**
+   - If PR title starts with `feat:` or `fix:`, GitHub Actions will:
+     - Bump version in `package.json`
+     - Create a commit: `v0.0.3`
+     - Publish to npm
+     - Create GitHub release
+     - Deploy documentation
+   - Result: Main branch shows clean version commits (`v0.0.1`, `v0.0.2`, `v0.0.3`)
+
+### Main Branch Structure
+
+The `main` branch maintains a clean history with two types of commits:
+- **Feature/Fix commits** from squashed PRs (e.g., `feat: add drag support`)
+- **Version commits** from automated releases (e.g., `v0.0.3`)
+
+This approach:
+- ✅ No force pushes
+- ✅ Linear history
+- ✅ Clear version tracking
+- ✅ Easy to understand what changed in each release
 
 ### Manual Release
 
