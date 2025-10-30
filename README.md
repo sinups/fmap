@@ -109,10 +109,19 @@ git commit -m "docs: update README"
    git commit -m "feat: add awesome new feature"
    ```
 
-3. Push and create a Pull Request:
+3. Push and create a Pull Request with a conventional commit title:
    ```bash
    git push origin feat/my-feature
    ```
+   
+   **PR Title Format:** `type: description`
+   - ✅ `feat: add new feature`
+   - ✅ `fix: resolve bug`
+   - ✅ `docs: update documentation`
+   - ✅ `chore: update dependencies`
+   - ❌ `Add new feature` (missing type)
+   
+   *Note: PR titles are validated automatically. Valid types: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `ci`*
 
 4. After review and merge to `main`, the release happens automatically! 🚀
 
