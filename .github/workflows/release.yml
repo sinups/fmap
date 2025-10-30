@@ -63,11 +63,28 @@ jobs:
         if: steps.version.outputs.bump != 'none'
         id: new_version
         run: |
-          cd package
-          npm version ${{ steps.version.outputs.bump }} --no-git-tag-version
-          NEW_VERSION=$(node -p "require('./package.json').version")
+          node -e "
+            const fs = require('fs');
+            const path = './package/package.json';
+            const pkg = JSON.parse(fs.readFileSync(path, 'utf8'));
+            const [major, minor, patch] = pkg.version.split('.').map(Number);
+            
+            let newVersion;
+            if ('${{ steps.version.outputs.bump }}' === 'major') {
+              newVersion = \`\${major + 1}.0.0\`;
+            } else if ('${{ steps.version.outputs.bump }}' === 'minor') {
+              newVersion = \`\${major}.\${minor + 1}.0\`;
+            } else {
+              newVersion = \`\${major}.\${minor}.\${patch + 1}\`;
+            }
+            
+            pkg.version = newVersion;
+            fs.writeFileSync(path, JSON.stringify(pkg, null, 2) + '\\n');
+            console.log(newVersion);
+          " > /tmp/new_version.txt
+          NEW_VERSION=$(cat /tmp/new_version.txt)
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-          cd ..
+          echo "Bumped version to $NEW_VERSION"
 
       - name: Rebuild package with new version
         if: steps.version.outputs.bump != 'none'
