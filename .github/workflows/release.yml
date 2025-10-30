@@ -1,0 +1,136 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Build package
+        run: npm run build
+
+      - name: Generate docgen
+        run: npm run docgen
+
+      - name: Run tests
+        run: npm test
+
+      - name: Determine version bump
+        id: version
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          if echo "$COMMIT_MSG" | grep -qE "^(feat!|fix!|refactor!|BREAKING CHANGE)"; then
+            echo "bump=major" >> $GITHUB_OUTPUT
+          elif echo "$COMMIT_MSG" | grep -qE "^feat(\(.+\))?: "; then
+            echo "bump=minor" >> $GITHUB_OUTPUT
+          elif echo "$COMMIT_MSG" | grep -qE "^(fix|perf|refactor)(\(.+\))?: "; then
+            echo "bump=patch" >> $GITHUB_OUTPUT
+          else
+            echo "bump=none" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Bump version
+        if: steps.version.outputs.bump != 'none'
+        id: new_version
+        run: |
+          node -e "
+            const fs = require('fs');
+            const path = './package/package.json';
+            const pkg = JSON.parse(fs.readFileSync(path, 'utf8'));
+            const [major, minor, patch] = pkg.version.split('.').map(Number);
+            let newVersion;
+            if ('${{ steps.version.outputs.bump }}' === 'major') {
+              newVersion = \`\${major + 1}.0.0\`;
+            } else if ('${{ steps.version.outputs.bump }}' === 'minor') {
+              newVersion = \`\${major}.\${minor + 1}.0\`;
+            } else {
+              newVersion = \`\${major}.\${minor}.\${patch + 1}\`;
+            }
+
+            pkg.version = newVersion;
+            fs.writeFileSync(path, JSON.stringify(pkg, null, 2) + '\\n');
+            console.log(newVersion);
+          " > /tmp/new_version.txt
+          NEW_VERSION=$(cat /tmp/new_version.txt)
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "Bumped version to $NEW_VERSION"
+
+      - name: Rebuild package with new version
+        if: steps.version.outputs.bump != 'none'
+        run: npm run build
+
+      - name: Copy files to package
+        if: steps.version.outputs.bump != 'none'
+        run: |
+          cp README.md package/README.md
+          cp LICENSE package/LICENSE
+
+      - name: Publish to npm
+        if: steps.version.outputs.bump != 'none'
+        working-directory: ./package
+        run: npm publish --access public --ignore-scripts
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Commit version bump
+        if: steps.version.outputs.bump != 'none'
+        run: |
+          git add package/package.json
+          git commit -m "Release ${{ steps.new_version.outputs.version }}"
+          git push
+
+      - name: Create GitHub Release
+        if: steps.version.outputs.bump != 'none'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.new_version.outputs.version }}
+          release_name: ${{ steps.new_version.outputs.version }}
+          body: |
+            Release ${{ steps.new_version.outputs.version }}
+            **Changes:** ${{ github.event.head_commit.message }}
+          draft: false
+          prerelease: false
+
+      - name: Build docs
+        if: steps.version.outputs.bump != 'none'
+        run: npm run docs:build
+
+      - name: Deploy to GitHub Pages
+        if: steps.version.outputs.bump != 'none'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/out
+          cname: false
