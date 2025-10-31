@@ -1,14 +1,4 @@
 import { useCallback, useState } from 'react';
-import {
-  CheckedNodeStatus,
-  getAllCheckedNodes,
-} from './get-all-checked-nodes/get-all-checked-nodes';
-import {
-  getAllChildrenNodes,
-  getChildrenNodesValues,
-} from './get-children-nodes-values/get-children-nodes-values';
-import { memoizedIsNodeChecked } from './is-node-checked/is-node-checked';
-import { memoizedIsNodeIndeterminate } from './is-node-indeterminate/is-node-indeterminate';
 import type { TreeNodeData } from './Tree';
 
 export type TreeExpandedState = Record<string, boolean>;
@@ -44,13 +34,6 @@ export function getTreeExpandedState(data: TreeNodeData[], expandedNodesValues: 
   return state;
 }
 
-function getInitialCheckedState(initialState: string[], data: TreeNodeData[]) {
-  const acc: string[] = [];
-
-  initialState.forEach((node) => acc.push(...getChildrenNodesValues(node, data)));
-
-  return Array.from(new Set(acc));
-}
 
 export interface UseTreeInput {
   /** Initial expanded state of all nodes */
@@ -58,9 +41,6 @@ export interface UseTreeInput {
 
   /** Initial selected state of nodes */
   initialSelectedState?: string[];
-
-  /** Initial checked state of nodes */
-  initialCheckedState?: string[];
 
   /** Determines whether multiple node can be selected at a time */
   multiple?: boolean;
@@ -81,9 +61,6 @@ export interface UseTreeReturnType {
 
   /** An array of selected nodes values */
   selectedState: string[];
-
-  /** An array of checked nodes values */
-  checkedState: string[];
 
   /** A value of the node that was last clicked
    * Anchor node is used to determine range of selected nodes for multiple selection
@@ -131,35 +108,10 @@ export interface UseTreeReturnType {
 
   /** Sets hovered node */
   setHoveredNode: React.Dispatch<React.SetStateAction<string | null>>;
-
-  /** Checks node with provided value */
-  checkNode: (value: string) => void;
-
-  /** Unchecks node with provided value */
-  uncheckNode: (value: string) => void;
-
-  /** Checks all nodes */
-  checkAllNodes: () => void;
-
-  /** Unchecks all nodes */
-  uncheckAllNodes: () => void;
-
-  /** Sets checked state */
-  setCheckedState: React.Dispatch<React.SetStateAction<string[]>>;
-
-  /** Returns all checked nodes with status */
-  getCheckedNodes: () => CheckedNodeStatus[];
-
-  /** Returns `true` if node with provided value is checked */
-  isNodeChecked: (value: string) => boolean;
-
-  /** Returns `true` if node with provided value is indeterminate */
-  isNodeIndeterminate: (value: string) => boolean;
 }
 
 export function useTree({
   initialSelectedState = [],
-  initialCheckedState = [],
   initialExpandedState = {},
   multiple = false,
   onNodeCollapse,
@@ -168,17 +120,15 @@ export function useTree({
   const [data, setData] = useState<TreeNodeData[]>([]);
   const [expandedState, setExpandedState] = useState(initialExpandedState);
   const [selectedState, setSelectedState] = useState(initialSelectedState);
-  const [checkedState, setCheckedState] = useState(initialCheckedState);
   const [anchorNode, setAnchorNode] = useState<string | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
 
   const initialize = useCallback(
     (_data: TreeNodeData[]) => {
       setExpandedState((current) => getInitialTreeExpandedState(current, _data, selectedState));
-      setCheckedState((current) => getInitialCheckedState(current, _data));
       setData(_data);
     },
-    [selectedState, checkedState]
+    [selectedState]
   );
 
   const toggleExpanded = useCallback(
@@ -282,40 +232,11 @@ export function useTree({
     setAnchorNode(null);
   }, []);
 
-  const checkNode = useCallback(
-    (value: string) => {
-      const checkedNodes = getChildrenNodesValues(value, data);
-      setCheckedState((current) => Array.from(new Set([...current, ...checkedNodes])));
-    },
-    [data]
-  );
-
-  const uncheckNode = useCallback(
-    (value: string) => {
-      const checkedNodes = getChildrenNodesValues(value, data);
-      setCheckedState((current) => current.filter((item) => !checkedNodes.includes(item)));
-    },
-    [data]
-  );
-
-  const checkAllNodes = useCallback(() => {
-    setCheckedState(() => getAllChildrenNodes(data));
-  }, [data]);
-
-  const uncheckAllNodes = useCallback(() => {
-    setCheckedState([]);
-  }, []);
-
-  const getCheckedNodes = () => getAllCheckedNodes(data, checkedState).result;
-  const isNodeChecked = (value: string) => memoizedIsNodeChecked(value, data, checkedState);
-  const isNodeIndeterminate = (value: string) =>
-    memoizedIsNodeIndeterminate(value, data, checkedState);
 
   return {
     multiple,
     expandedState,
     selectedState,
-    checkedState,
     anchorNode,
     initialize,
 
@@ -326,12 +247,6 @@ export function useTree({
     collapseAllNodes,
     setExpandedState,
 
-    checkNode,
-    uncheckNode,
-    checkAllNodes,
-    uncheckAllNodes,
-    setCheckedState,
-
     toggleSelected,
     select,
     deselect,
@@ -340,9 +255,6 @@ export function useTree({
 
     hoveredNode,
     setHoveredNode,
-    getCheckedNodes,
-    isNodeChecked,
-    isNodeIndeterminate,
   };
 }
 

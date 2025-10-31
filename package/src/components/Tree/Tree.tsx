@@ -74,9 +74,6 @@ export interface TreeProps extends BoxProps, StylesApiProps<TreeFactory>, Elemen
   /** If set, tree node with children is expanded on space key press @default `true` */
   expandOnSpace?: boolean;
 
-  /** If set, tree node is checked on space key press @default `false` */
-  checkOnSpace?: boolean;
-
   /** If set, tree node is selected on click @default `false` */
   selectOnClick?: boolean;
 
@@ -140,7 +137,6 @@ export const Tree = factory<TreeFactory>((_props, ref) => {
     allowRangeSelection,
     expandOnSpace,
     levelOffset,
-    checkOnSpace,
     attributes,
     ...others
   } = props;
@@ -187,7 +183,6 @@ export const Tree = factory<TreeFactory>((_props, ref) => {
       flatValues={flatValues}
       allowRangeSelection={allowRangeSelection}
       expandOnSpace={expandOnSpace}
-      checkOnSpace={checkOnSpace}
     />
   ));
 
